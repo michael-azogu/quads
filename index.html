@@ -32,6 +32,27 @@
 
     let rgbMatrix = []
 
+    document.body.focus()
+    document.body.addEventListener('paste', (event) => {
+      const items = event.clipboardData.items
+      for (let i = 0; i < items.length; i++) {
+        if (items[i].kind === 'file' && items[i].type.startsWith('image/')) {
+          const blob = items[i].getAsFile()
+          const dataTransfer = new DataTransfer()
+          dataTransfer.items.add(
+            new File([blob], 'pasted-image.png', { type: blob.type })
+          )
+          input.files = dataTransfer.files
+          input.dispatchEvent(
+            new Event('change', {
+              bubbles: true,
+              target: { files: input.files },
+            })
+          )
+        }
+      }
+    })
+
     input.addEventListener('change', function (e) {
       const file = e.target.files[0]
       if (!file) return
@@ -122,12 +143,12 @@
 
         ctx.fillStyle = rgbToHex(...avgColor)
         ctx.fillRect(x, y, side, side)
-        ctx.lineWidth = 0.1
+        ctx.lineWidth = 0.2
         ctx.strokeRect(x, y, side, side)
 
-        const percentOutsideRange = percent(region, avgColor, [10, 10, 10])
+        const percentOutsideRange = percent(region, avgColor, [14, 14, 14])
 
-        const done = percentOutsideRange < 0.05
+        const done = percentOutsideRange < 0.01
 
         const half = Math.round(side / 2)
         if (!done && half > 2) {
