@@ -67,6 +67,7 @@
           let side = twoify(Math.min(image.width * 2, image.height * 2))
           canvas.width = side
           canvas.height = side
+          ctx.scale(side / image.width, side / image.height)
           ctx.drawImage(image, 0, 0)
 
           const imageData = ctx.getImageData(
@@ -146,7 +147,7 @@
         ctx.lineWidth = 0.2
         ctx.strokeRect(x, y, side, side)
 
-        const percentOutsideRange = percent(region, avgColor, [14, 14, 14])
+        const percentOutsideRange = percent(region, avgColor, [32, 32, 32])
 
         const done = percentOutsideRange < 0.01
 
